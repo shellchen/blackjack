@@ -50,10 +50,12 @@ dealerscore = calculate_score(dealerhands)
 puts "On my hands are #{onhands[0]}, #{onhands[1]}."
 puts "Dealer show #{dealerhands[1]}."
 puts "My score is #{myscore}."
-puts "hit / stay"
 
 while $alive
-  choice = gets.chomp if $playeraction
+  if $playeraction
+    puts "hit ?"
+    choice = gets.chomp
+  end
 
   if choice == "hit" && dealerscore < 17
     onhands << feedcard(deck)
