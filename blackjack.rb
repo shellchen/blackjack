@@ -1,8 +1,12 @@
+require "pry"
+
 myscore = 0
 dealerscore = 0
 onhands = []
 dealerhands = []
 deck = []
+$alive = true
+$playeraction = true
 
 def reset
   suits = ['H', 'D', 'S', 'C']
@@ -10,15 +14,11 @@ def reset
   suits.product(cards).shuffle
 end
 
-def feedme(deck, onhands)
-  onhands << deck.pop
+def feedcard(deck)
+  deck.pop
 end
 
-def feeddealer(deck, dealerhands)
-  dealerhands << deck.pop
-  0
-end
-
+#from solution
 def calculate_score(playercards)
   score = 0
   ary = playercards.map{ |element| element[1] }
@@ -40,10 +40,10 @@ def calculate_score(playercards)
 end
 
 deck = reset()
-feedme(deck, onhands)
-feeddealer(deck, dealerhands)
-feedme(deck, onhands)
-feeddealer(deck, dealerhands)
+onhands << feedcard(deck)
+dealerhands << feedcard(deck)
+onhands << feedcard(deck)
+dealerhands << feedcard(deck)
 myscore = calculate_score(onhands)
 dealerscore = calculate_score(dealerhands)
 
@@ -51,19 +51,35 @@ puts "On my hands are #{onhands[0]}, #{onhands[1]}."
 puts "Dealer show #{dealerhands[1]}."
 puts "My score is #{myscore}."
 puts "hit / stay"
-choice = gets.chomp
 
-if choice == "hit"
-  feedme(deck, onhands)
-  myscore = calculate_score(onhands)
-  
-  feeddealer(deck, dealerhands) if dealerscore < 17
-  dealerscore = calculate_score(dealerhands)
-  puts "Dealer score is #{dealerscore}."
-  puts "Your score is #{myscore}."
-else
-  feeddealer(deck, dealerhands) if dealerscore < 17
-  dealerscore = calculate_score(dealerhands)
-  puts "Dealer score is #{dealerscore}."
+while $alive
+  choice = gets.chomp if $playeraction
+
+  if choice == "hit" && dealerscore < 17
+    onhands << feedcard(deck)
+    puts "You get #{onhands.last}"
+    myscore = calculate_score(onhands)
+    dealerhands << feedcard(deck)
+    dealerscore = calculate_score(dealerhands)
+  elsif choice == "hit" && dealerscore >= 17
+    onhands << feedcard(deck)
+    puts "You get #{onhands.last}"
+    myscore = calculate_score(onhands)
+  elsif dealerscore < 17
+    dealerhands << feedcard(deck)
+    dealerscore = calculate_score(dealerhands)
+    $playeraction = false
+  else
+    $alive = false
+    $playeraction = false
+  end
+
+  if myscore >= 21 || dealerscore >= 21
+    $alive = false
+  end
+
   puts "Your score is #{myscore}."
 end
+puts "==================="
+puts "Dealer score is #{dealerscore}."
+puts "Your score is #{myscore}."
