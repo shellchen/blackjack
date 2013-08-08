@@ -53,7 +53,7 @@ puts "My score is #{myscore}."
 
 while $alive
   if $playeraction
-    puts "hit ?"
+    puts "hit ? (type hit or stay with enter)"
     choice = gets.chomp
   end
 
@@ -82,6 +82,8 @@ while $alive
 
   puts "Your score is #{myscore}."
 end
+
 puts "==================="
 puts "Dealer score is #{dealerscore}."
 puts "Your score is #{myscore}."
+
